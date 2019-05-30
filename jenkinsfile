@@ -25,7 +25,7 @@ try {
       node {
         stage("Build Image") {
           unstash name:"war"
-          sh "oc start-build ${appName} --from-file=target/ROOT.war -n ${project}"
+          sh "oc start-build ${appName} --from-file=target/ROOT.war -n ${project} --follow"
           timeout(time: 20, unit: 'MINUTES') {
             openshift.withCluster() {
               openshift.withProject() {

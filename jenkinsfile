@@ -1,6 +1,7 @@
 try {
+
    timeout(time: 20, unit: 'MINUTES') {
-      def appName="${APP_NAME}"
+      def appName="openshift-jee-sample"
       def project=""
 
       node {

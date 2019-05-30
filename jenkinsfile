@@ -29,7 +29,7 @@ try {
           timeout(time: 20, unit: 'MINUTES') {
             openshift.withCluster() {
               openshift.withProject() {
-                def bc = openshift.selector('bc', "${appName}-docker")
+                def bc = openshift.selector('bc', "${appName}")
                 echo "Found 1 ${bc.count()} buildconfig"
                 def blds = bc.related('builds')
                 blds.untilEach {

@@ -9,7 +9,8 @@ try {
       node {
         stage("Initialize") {
           project = env.PROJECT_NAME
-          sh "echo env"
+          sh "echo ${env}"
+          sh "echo ${env.APP_NAME}"
         }
       }
 

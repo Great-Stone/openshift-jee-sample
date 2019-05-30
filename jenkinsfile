@@ -1,8 +1,7 @@
 try {
 
    timeout(time: 20, unit: 'MINUTES') {
-      //def GIT_SOURCE_URL = 'https://github.com/Great-Stone/openshift-jee-sample'
-      def GIT_SOURCE_URL = spec.source.git.uri
+      def GIT_SOURCE_URL = 'https://github.com/Great-Stone/openshift-jee-sample'
       def GIT_SOURCE_REF = 'master'
       def appName="jws-app-1"
       def project=""

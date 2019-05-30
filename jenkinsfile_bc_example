@@ -1,0 +1,78 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    pipeline.alpha.openshift.io/uses: '[{"name": "jenkins", "namespace": "", "kind": "DeploymentConfig"}]'
+  creationTimestamp: '2019-05-30T05:27:05Z'
+  labels:
+    name: eap-app-1
+  name: eap-app-1
+  namespace: demo-test
+  resourceVersion: '1194368'
+  selfLink: /apis/build.openshift.io/v1/namespaces/demo-test/buildconfigs/eap-app-1
+  uid: 8fe928ba-829b-11e9-906c-023718179971
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: {}
+  output: {}
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    type: None
+  strategy:
+    jenkinsPipelineStrategy:
+      env:
+        - name: PROJECT_NAME
+          value: demo-test
+        - name: APP_NAME
+          value: eap-app-1
+      jenkinsfile: |-
+        def appName=env.APP_NAME
+        def project=env.PROJECT_NAME
+
+        node("maven") {
+          stage("Initialize") {
+                sh "echo ${project}"
+          }
+          stage('Build App') {
+            git branch: 'master', url: 'https://github.com/Great-Stone/openshift-jee-sample.git'
+            sh "mvn clean package -Popenshift"
+          }
+          stage('Build Image') {
+            script {
+              openshift.withCluster() {
+                openshift.withProject() {
+                  openshift.selector("bc", "${appName}").startBuild("--from-file=target/ROOT.war", "--wait=true")
+                }
+              }
+            }
+          }
+          stage('Promote to Deploy?') {
+            agent {
+              label 'skopeo'
+            }
+            timeout(time:15, unit:'MINUTES') {
+                input message: "Promote to STAGE?", ok: "Promote"
+            }
+
+            script {
+              openshift.withCluster() {
+                openshift.withProject() {
+                  openshift.selector("dc", "${appName}").rollout().latest();
+                }
+              }
+            }
+          }
+        }
+    type: JenkinsPipeline
+  successfulBuildsHistoryLimit: 5
+  triggers:
+    - github:
+        secret: 62AAIc11
+      type: GitHub
+    - generic:
+        secret: vsSOdm22
+      type: Generic
+status:
+  lastVersion: 1

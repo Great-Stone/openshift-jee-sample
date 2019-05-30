@@ -3,12 +3,13 @@ try {
    timeout(time: 20, unit: 'MINUTES') {
       def GIT_SOURCE_URL = 'https://github.com/Great-Stone/openshift-jee-sample'
       def GIT_SOURCE_REF = 'master'
-      def appName="openshift-jee-sample"
+      def appName="jws-app-1"
       def project=""
 
       node {
         stage("Initialize") {
           project = env.PROJECT_NAME
+          sh "echo env"
         }
       }
 

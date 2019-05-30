@@ -18,12 +18,12 @@ try {
         }
         stage("Build WAR") {
           sh "mvn clean package -Popenshift -DskipTests=true"
-          stash name:"war", includes:"target/ROOT.war"
+          //stash name:"war", includes:"target/ROOT.war"
         }
         stage("Build Image") {
-          unstash name:"war"
-          sh "oc start-build tasks --from-file=target/ROOT.war -n ${project} --follow"
-          openshiftTag alias: 'false', destStream: 'tasks', destTag: devTag, destinationNamespace: 'user11-tasks-dev', namespace: 'user11-tasks-dev', srcStream: 'tasks', srcTag: 'latest', verbose: 'false'
+          //unstash name:"war"
+          sh "oc start-build ${appName} --from-file=target/ROOT.war -n ${project} --follow"
+          openshiftTag alias: 'false', destStream: '${appName}', destTag: 'latest', destinationNamespace: '${project}', namespace: '${project}', srcStream: '${appName}', srcTag: 'latest', verbose: 'false'
         }
         stage("Deploy") {
           input "Deploy?"
